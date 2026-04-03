@@ -1393,15 +1393,33 @@ def page_users():
 def page_samaya():
     render_page_header("📚 Samaya Vakuppu", "Students")
     t1, t2 = st.tabs(["➕ Add", "📋 List"])
+    # Fix for page_samaya - the with c2 block had indentation issue
+# Replace the page_samaya function's form section with this:
+
     with t1:
         with st.form("sv", clear_on_submit=True):
             c1, c2 = st.columns(2)
-            with c1: sn = st.text_input("Name *"); sd = st.date_input("DOB", value=date(2010,1,1)); spn = st.text_input("Parent"); sa = st.text_area("Address", height=60)
-            with c2: sbn = st.text_input("Bond No"); sbd = st.date_input("Bond Date"); sbk = st.text_input("Bank")
-                sbf = st.file_uploader("Bond Scan", type=['jpg','jpeg','png','pdf'], key="svb"); sph = st.file_uploader("Photo", type=['jpg','jpeg','png'], key="svp")
+            with c1:
+                sn = st.text_input("Name *")
+                sd = st.date_input("DOB", value=date(2010,1,1))
+                spn = st.text_input("Parent")
+                sa = st.text_area("Address", height=60)
+            with c2:
+                sbn = st.text_input("Bond No")
+                sbd = st.date_input("Bond Date")
+                sbk = st.text_input("Bank")
+                sbf = st.file_uploader("Bond Scan", type=['jpg','jpeg','png','pdf'], key="svb")
+                sph = st.file_uploader("Photo", type=['jpg','jpeg','png'], key="svp")
             if st.form_submit_button("✅", use_container_width=True):
-                if sn.strip(): db_insert("samaya_vakuppu", {"student_name": sn.strip(), "dob": str(sd), "address": sa, "parent_name": spn, "bond_no": sbn,
-                    "bond_issue_date": str(sbd), "bond_issuing_bank": sbk, "scanned_bond_url": file_to_base64(sbf), "photo_url": file_to_base64(sph)}); st.rerun()
+                if sn.strip():
+                    db_insert("samaya_vakuppu", {
+                        "student_name": sn.strip(), "dob": str(sd),
+                        "address": sa, "parent_name": spn, "bond_no": sbn,
+                        "bond_issue_date": str(sbd), "bond_issuing_bank": sbk,
+                        "scanned_bond_url": file_to_base64(sbf),
+                        "photo_url": file_to_base64(sph)
+                    })
+                    st.rerun()
     with t2:
         for s in db_select("samaya_vakuppu"):
             with st.expander(f"👤 {s['student_name']}"):
